@@ -1,0 +1,23 @@
+{
+  "overview": "MediCare Hub is a mobile-first health management web app that helps patients securely track prescriptions, medical reports, medicine reminders, and follow-up appointments — all in one simple, accessible place.",
+  "features": [
+    "Secure login with Internet Identity",
+    "Dashboard with today's medicines and upcoming follow-ups",
+    "Prescription management with image/PDF upload support",
+    "Medicine reminders with dose tracking (mark taken/missed)",
+    "Medical reports upload and storage (lab, imaging, test results)",
+    "Follow-up appointment scheduling with doctor details",
+    "Health history timeline with filters"
+  ],
+  "category": "health-wellness",
+  "tags": [
+    "health",
+    "medical",
+    "prescriptions",
+    "reminders",
+    "patient",
+    "mobile-first",
+    "wellness"
+  ],
+  "last_updated": "2026-04-24T14:52:18.022Z"
+}

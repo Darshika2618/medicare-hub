@@ -1,0 +1,207 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type UserId = principal;
+type Timestamp = nat;
+type TimelineEventKind = 
+ variant {
+   followup:
+    record {
+      department: text;
+      doctorName: text;
+      status: variant {
+                completed;
+                rescheduled;
+                scheduled;
+              };
+    };
+   prescription:
+    record {
+      dosage: text;
+      frequency: text;
+      medicineName: text;
+      status: variant {
+                active;
+                inactive;
+              };
+    };
+   report:
+    record {
+      fileRef: ExternalBlob;
+      notes: text;
+      reportType: variant {
+                    imaging;
+                    lab;
+                    other;
+                  };
+    };
+ };
+type TimelineEvent = 
+ record {
+   date: Timestamp;
+   id: RecordId;
+   kind: TimelineEventKind;
+ };
+type ReportType = 
+ variant {
+   imaging;
+   lab;
+   other;
+ };
+type ReportInput = 
+ record {
+   fileRef: ExternalBlob;
+   notes: text;
+   reportDate: Timestamp;
+   reportType: ReportType;
+ };
+type Report = 
+ record {
+   createdAt: Timestamp;
+   fileRef: ExternalBlob;
+   id: RecordId;
+   notes: text;
+   owner: UserId;
+   reportDate: Timestamp;
+   reportType: ReportType;
+ };
+type ReminderUpdate = 
+ record {
+   dosage: opt text;
+   isActive: opt bool;
+   medicineName: opt text;
+   reminderTimes: opt vec nat;
+ };
+type ReminderInput = 
+ record {
+   dosage: text;
+   medicineName: text;
+   reminderTimes: vec nat;
+ };
+type Reminder = 
+ record {
+   createdAt: Timestamp;
+   dosage: text;
+   id: RecordId;
+   isActive: bool;
+   medicineName: text;
+   owner: UserId;
+   reminderTimes: vec nat;
+ };
+type RecordId = nat;
+type PrescriptionStatus = 
+ variant {
+   active;
+   inactive;
+ };
+type PrescriptionInput = 
+ record {
+   documentRef: opt ExternalBlob;
+   dosage: text;
+   endDate: opt Timestamp;
+   frequency: text;
+   medicineName: text;
+   notes: text;
+   startDate: Timestamp;
+ };
+type Prescription = 
+ record {
+   createdAt: Timestamp;
+   documentRef: opt ExternalBlob;
+   dosage: text;
+   endDate: opt Timestamp;
+   frequency: text;
+   id: RecordId;
+   medicineName: text;
+   notes: text;
+   owner: UserId;
+   startDate: Timestamp;
+   status: PrescriptionStatus;
+ };
+type FollowUpStatus = 
+ variant {
+   completed;
+   rescheduled;
+   scheduled;
+ };
+type FollowUpInput = 
+ record {
+   department: text;
+   doctorName: text;
+   notes: text;
+   scheduledDate: Timestamp;
+ };
+type FollowUp = 
+ record {
+   createdAt: Timestamp;
+   department: text;
+   doctorName: text;
+   id: RecordId;
+   notes: text;
+   owner: UserId;
+   rescheduledDate: opt Timestamp;
+   scheduledDate: Timestamp;
+   status: FollowUpStatus;
+ };
+type ExternalBlob = blob;
+type DoseRecord = 
+ record {
+   date: Timestamp;
+   hour: nat;
+   id: RecordId;
+   owner: UserId;
+   reminderId: RecordId;
+   takenAt: Timestamp;
+ };
+type DashboardSummary = 
+ record {
+   activePrescriptions: vec Prescription;
+   recentReports: vec Report;
+   todayReminders: vec Reminder;
+   upcomingFollowUps: vec FollowUp;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  addPrescription: (input: PrescriptionInput) -> (Prescription);
+  addReport: (input: ReportInput) -> (Report);
+  createReminder: (input: ReminderInput) -> (Reminder);
+  deleteFollowUp: (id: RecordId) -> (bool);
+  deleteReminder: (id: RecordId) -> (bool);
+  deleteReport: (id: RecordId) -> (bool);
+  getDashboardSummary: () -> (DashboardSummary) query;
+  getDoseHistory7Days: (sinceTimestamp: Timestamp) -> (vec DoseRecord) query;
+  getHealthTimeline: () -> (vec TimelineEvent) query;
+  getPrescription: (id: RecordId) -> (opt Prescription) query;
+  getReport: (id: RecordId) -> (opt Report) query;
+  getUpcomingFollowUps: (nowTimestamp: Timestamp) -> (vec FollowUp) query;
+  listActiveReminders: () -> (vec Reminder) query;
+  listFollowUps: () -> (vec FollowUp) query;
+  listPrescriptions: () -> (vec Prescription) query;
+  listReports: () -> (vec Report) query;
+  markFollowUpCompleted: (id: RecordId) -> (bool);
+  recordDoseTaken: (reminderId: RecordId, date: Timestamp, hour: nat) ->
+   (DoseRecord);
+  rescheduleFollowUp: (id: RecordId, newDate: Timestamp) -> (bool);
+  scheduleFollowUp: (input: FollowUpInput) -> (FollowUp);
+  updatePrescriptionStatus: (id: RecordId, status: PrescriptionStatus) ->
+   (bool);
+  updateReminder: (id: RecordId, updates: ReminderUpdate) -> (bool);
+}

@@ -1,0 +1,127 @@
+// Version: 1.0.0
+type DoseRecord__971035751 =
+  {
+    date : Timestamp__301639476;
+    hour : Nat;
+    id : RecordId__634517021;
+    owner : UserId__158757552;
+    reminderId : RecordId__634517021;
+    takenAt : Timestamp__301639476
+  };
+type ExternalBlob__671167343 = Blob;
+type FollowUpStatus__855727200 = {#completed; #rescheduled; #scheduled};
+type FollowUp__673628471 =
+  {
+    createdAt : Timestamp__301639476;
+    department : Text;
+    doctorName : Text;
+    id : RecordId__634517021;
+    notes : Text;
+    owner : UserId__158757552;
+    rescheduledDate : ?Timestamp__301639476;
+    scheduledDate : Timestamp__301639476;
+    status : FollowUpStatus__855727200
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type PrescriptionStatus__47631245 = {#active; #inactive};
+type Prescription__674512689 =
+  {
+    createdAt : Timestamp__301639476;
+    documentRef : ?ExternalBlob__671167343;
+    dosage : Text;
+    endDate : ?Timestamp__301639476;
+    frequency : Text;
+    id : RecordId__634517021;
+    medicineName : Text;
+    notes : Text;
+    owner : UserId__158757552;
+    startDate : Timestamp__301639476;
+    status : PrescriptionStatus__47631245
+  };
+type RecordId__634517021 = Nat;
+type Reminder__165164277 =
+  {
+    createdAt : Timestamp__301639476;
+    dosage : Text;
+    id : RecordId__634517021;
+    isActive : Bool;
+    medicineName : Text;
+    owner : UserId__158757552;
+    reminderTimes : [Nat]
+  };
+type ReportType__755389543 = {#imaging; #lab; #other};
+type Report__369838223 =
+  {
+    createdAt : Timestamp__301639476;
+    fileRef : ExternalBlob__671167343;
+    id : RecordId__634517021;
+    notes : Text;
+    owner : UserId__158757552;
+    reportDate : Timestamp__301639476;
+    reportType : ReportType__755389543
+  };
+type Timestamp__301639476 = Nat;
+type UserId__158757552 = Principal;
+actor {
+  stable doses :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?DoseRecord__971035751]];
+      var elementIndex : Nat__490723111
+    };
+  stable followups :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?FollowUp__673628471]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextDoseId :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextFollowUpId :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextPrescriptionId :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextReminderId :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextReportId :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable prescriptions :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Prescription__674512689]];
+      var elementIndex : Nat__490723111
+    };
+  stable reminders :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Reminder__165164277]];
+      var elementIndex : Nat__490723111
+    };
+  stable reports :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Report__369838223]];
+      var elementIndex : Nat__490723111
+    }
+};
